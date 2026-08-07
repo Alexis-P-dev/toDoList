@@ -1,3 +1,33 @@
-body {
-    background-color: skyblue;
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+dialog.sheet {
+    transition: translate 0.3s ease-out, display 0.3s allow-discrete, overlay 0.3s allow-discrete;
+    translate: 0 100%;
+}
+
+dialog.sheet[open] {
+    translate: 0 0;
+}
+
+@starting-style {
+    dialog.sheet[open] {
+        translate: 0 100%;
+    }
+}
+
+dialog.sheet::backdrop {
+    background-color: rgb(0 0 0 / 0);
+    transition: background-color 0.3s ease-out, display 0.3s allow-discrete, overlay 0.3s allow-discrete;
+}
+
+dialog.sheet[open]::backdrop {
+    background-color: rgb(0 0 0 / 0.5);
+}
+
+@starting-style {
+    dialog.sheet[open]::backdrop {
+        background-color: rgb(0 0 0 / 0);
+    }
 }

@@ -2,8 +2,16 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}Ma Todo App{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+
+        <script>
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.classList.add('dark');
+            }
+        </script>
+
         {% block stylesheets %}
         {% endblock %}
 
@@ -18,7 +26,31 @@
         <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
         {% endif %}
     </head>
-    <body>
+    <body class="bg-stone-50 dark:bg-slate-900 text-stone-900 dark:text-stone-100 min-h-screen antialiased transition-colors">
+
+        <header class="sticky top-0 z-10 bg-white dark:bg-slate-800 border-b border-stone-200 dark:border-slate-700">
+            <div class="max-w-2xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
+                <h2 class="text-lg font-bold">Mes tâches</h2>
+
+                <button id="theme-toggle" type="button"
+                        class="rounded-full p-2 text-stone-500 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-slate-700 transition-colors">
+                    <svg id="icon-sun" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.36 6.36l-.7-.7M6.34 6.34l-.7-.7m12.72 0l-.7.7M6.34 17.66l-.7.7M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <svg id="icon-moon" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+            </div>
+        </header>
+
         {% block body %}{% endblock %}
+
+        <script>
+            document.getElementById('theme-toggle').addEventListener('click', function () {
+                document.documentElement.classList.toggle('dark');
+                localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+            });
+        </script>
     </body>
 </html>
