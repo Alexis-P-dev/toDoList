@@ -38,7 +38,7 @@
 
     <ul class="space-y-3">
         {% for todo in todos %}
-            <li class="flex items-center gap-3 rounded-xl bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 px-4 py-4 shadow-sm">
+            <li class="flex items-center gap-3 rounded-xl bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 px-4 py-4 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all">
 
                 <button type="button" onclick="document.getElementById('modale-{{ todo.id }}').showModal()"
                         class="shrink-0 flex items-center justify-center w-6 h-6 rounded-full border-2 active:scale-95 transition-all {% if todo.statut.value == 'termine' %}bg-green-600 border-green-600{% elseif todo.statut.value == 'en_cours' %}bg-transparent border-blue-600{% else %}border-stone-300 dark:border-slate-600{% endif %}">
