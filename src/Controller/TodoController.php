@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use DateTime;
 use App\Entity\Todo;
 use App\Enum\Statut;
 use App\Repository\TodoRepository;
@@ -37,6 +38,7 @@ class TodoController extends AbstractController
     public function nouveau(Request $request, EntityManagerInterface $entityManager)
     {
         $titre = $request->request->get('titre');
+        $dateFin = $request->request->get('dateFin');
 
         if ($titre === '') {
             $this->addFlash('erreur', 'Le titre est obligatoire');
@@ -47,6 +49,10 @@ class TodoController extends AbstractController
         $todo->setTitre($titre);
         $todo->setStatut(Statut::A_FAIRE);
 
+        if (!empty($dateFin)) {
+            $todo->setDateFin(DateTime::createFromFormat('Y-m-d', $dateFin));
+        }
+        
         $entityManager->persist($todo);
         $entityManager->flush();
 
