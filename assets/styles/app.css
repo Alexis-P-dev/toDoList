@@ -47,3 +47,20 @@ dialog.sheet[open]::backdrop {
         stroke-dashoffset: 20;
     }
 }
+
+.loading-circle {
+    fill: none;
+    stroke-width: 2;
+    stroke-dasharray: 69.12; /* circonférence pour r=11 */
+    stroke-dashoffset: 0;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: center;
+    transition: stroke-dashoffset 0.6s ease-out;
+}
+
+@starting-style {
+    .loading-circle {
+        stroke-dashoffset: 69.12;
+    }
+}
