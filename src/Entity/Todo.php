@@ -21,6 +21,9 @@ class Todo
     #[ORM\Column(enumType: Statut::class)]
     private ?Statut $statut = null;
 
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?\DateTime $dateFin = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -46,6 +49,18 @@ class Todo
     public function setStatut(Statut $statut): static
     {
         $this->statut = $statut;
+
+        return $this;
+    }
+
+    public function getDateFin(): ?\DateTime
+    {
+        return $this->dateFin;
+    }
+
+    public function setDateFin(?\DateTime $dateFin): static
+    {
+        $this->dateFin = $dateFin;
 
         return $this;
     }
