@@ -152,6 +152,13 @@
                 {# Titre todo #}
                 <span class="flex-1 font-medium {% if todo.statut.value == 'termine' %}line-through text-stone-400 dark:text-stone-500{% else %}text-stone-800 dark:text-stone-100{% endif %}">{{ todo.titre }}</span>
                 
+                {# Durée todo #}
+                {% if todo.duree %}
+                    <span class="text-xs text-stone-400 dark:text-stone-500">
+                        {{ todo.duree }} min
+                    </span>
+                {% endif %}
+
                 {# Date todo #}
                 {% if todo.dateFin %}
                     <span class="text-xs text-stone-400 dark:text-stone-500">
@@ -164,6 +171,9 @@
                         {% endif %}
                     </span>
                 {% endif %}
+
+                {# Importance todo #}
+                <span class="w-2.5 h-2.5 rounded-full {% if todo.importance.value == 'normale' %}bg-green-600{% elseif todo.importance.value == 'importante' %}bg-orange-600{% else %}bg-red-600{% endif %}"></span>
 
                 {# Modifier todo #}
                 <a href="{{ path('todo_modifier', {id: todo.id}) }}"
