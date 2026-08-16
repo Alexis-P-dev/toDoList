@@ -149,4 +149,33 @@ class TodoController extends AbstractController
 
         return $this->redirectToRoute('todo_liste');
     }
+
+    #[Route('/statistiques', name:'statistiques', methods: ['GET'])]
+    public function statistiques(TodoRepository $todoRepository)
+    {
+        $nbAFaire = $todoRepository->count(['statut' => Statut::A_FAIRE]);
+        $nbEnCours = $todoRepository->count(['statut' => Statut::EN_COURS]);
+        $nbTermine = $todoRepository->count(['statut' => Statut::TERMINE]);
+        $nbTotal = $todoRepository->count([]);
+
+        if ($nbTotal == 0) {
+            $pourcentageTermine = 0;
+            $pourcentageEnCours = 0;
+            $pourcentageAFaire = 0;
+        } else {
+            $pourcentageAFaire = $nbAFaire / $nbTotal * 100;
+            $pourcentageEnCours = $nbEnCours / $nbTotal * 100;
+            $pourcentageTermine = $nbTermine / $nbTotal * 100;
+        }
+
+        return $this->render('todo/statistiques.html.twig', [
+            'nbAFaire' => $nbAFaire,
+            'nbEnCours' => $nbEnCours,
+            'nbTermine' => $nbTermine,
+            'nbTotal' => $nbTotal,
+            'pourcentageAFaire' => $pourcentageAFaire,
+            'pourcentageEnCours' => $pourcentageEnCours,
+            'pourcentageTermine' => $pourcentageTermine,
+        ]);
+    }
 }
