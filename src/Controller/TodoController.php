@@ -40,7 +40,8 @@ class TodoController extends AbstractController
     {
         $titre = $request->request->get('titre');
         $dateFin = $request->request->get('dateFin');
-        $duree = $request->request->get('duree');
+        $heures = $request->request->get('heures');
+        $minutes = $request->request->get('minutes');
         $importance = $request->request->get('importance');
 
         if ($titre === '') {
@@ -57,8 +58,9 @@ class TodoController extends AbstractController
             $todo->setDateFin(DateTime::createFromFormat('Y-m-d', $dateFin));
         }
 
-        if (!empty($duree)) {
-            $todo->setDuree(intval($duree));
+        if (!empty($heures) || !empty($minutes)) {
+            $duree = intval($heures) * 60 + intval($minutes);
+            $todo->setDuree($duree);
         }
         
         $entityManager->persist($todo);
