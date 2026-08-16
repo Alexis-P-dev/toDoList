@@ -160,7 +160,11 @@ class TodoController extends AbstractController
 
         if ($nbTotal == 0) {
             $pourcentageTermine = 0;
+            $pourcentageEnCours = 0;
+            $pourcentageAFaire = 0;
         } else {
+            $pourcentageAFaire = $nbAFaire / $nbTotal * 100;
+            $pourcentageEnCours = $nbEnCours / $nbTotal * 100;
             $pourcentageTermine = $nbTermine / $nbTotal * 100;
         }
 
@@ -168,6 +172,9 @@ class TodoController extends AbstractController
             'nbAFaire' => $nbAFaire,
             'nbEnCours' => $nbEnCours,
             'nbTermine' => $nbTermine,
+            'nbTotal' => $nbTotal,
+            'pourcentageAFaire' => $pourcentageAFaire,
+            'pourcentageEnCours' => $pourcentageEnCours,
             'pourcentageTermine' => $pourcentageTermine,
         ]);
     }
