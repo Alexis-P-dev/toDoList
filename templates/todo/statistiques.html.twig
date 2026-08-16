@@ -47,53 +47,69 @@
     </div>
 
     {% set circonference = 2 * 3.14159 * 50 %}
+    {% set lenTermine = circonference * pourcentageTermine / 100 %}
+    {% set lenEnCours = circonference * pourcentageEnCours / 100 %}
+    {% set lenAFaire = circonference * pourcentageAFaire / 100 %}
 
     <div class="mt-6 rounded-xl bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 p-6">
         <p class="font-semibold text-stone-700 dark:text-stone-200 mb-4">Taux de complétion</p>
 
-        <div class="flex items-center gap-6">
-            <svg viewBox="0 0 120 120" class="w-32 h-32 -rotate-90 shrink-0">
-                <circle cx="60" cy="60" r="50" fill="none" stroke-width="12"
-                        class="stroke-stone-200 dark:stroke-slate-700" />
+        <div class="flex flex-col sm:flex-row items-center justify-between">
+            <div class="relative w-36 h-36 sm:w-48 sm:h-48 shrink-0">
+                <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
+                    <circle cx="60" cy="60" r="50" fill="none" stroke-width="12"
+                            class="stroke-stone-200 dark:stroke-slate-700" />
 
-                {# Segment Terminé - démarre à 0% #}
-                <circle cx="60" cy="60" r="50" fill="none" stroke-width="12"
-                        class="stroke-green-500"
-                        stroke-dasharray="{{ circonference }}"
-                        stroke-dashoffset="{{ (circonference * (1 - pourcentageTermine / 100))|round(2) }}" />
+                    <circle cx="60" cy="60" r="50" fill="none" stroke-width="12"
+                            stroke-linecap="round"
+                            class="stroke-green-500"
+                            stroke-dasharray="{{ lenTermine|round(2) }} {{ (circonference - lenTermine)|round(2) }}"
+                            stroke-dashoffset="0" />
 
-                {# Segment En cours - démarre après "Terminé" #}
-                <circle cx="60" cy="60" r="50" fill="none" stroke-width="12"
-                        class="stroke-blue-500"
-                        stroke-dasharray="{{ circonference }}"
-                        stroke-dashoffset="{{ (circonference * (1 - pourcentageEnCours / 100) + circonference * (pourcentageTermine / 100))|round(2) }}" />
+                    <circle cx="60" cy="60" r="50" fill="none" stroke-width="12"
+                            stroke-linecap="round"
+                            class="stroke-blue-500"
+                            stroke-dasharray="{{ lenEnCours|round(2) }} {{ (circonference - lenEnCours)|round(2) }}"
+                            stroke-dashoffset="{{ -lenTermine|round(2) }}" />
 
-                {# Segment À faire - démarre après "Terminé" + "En cours" #}
-                <circle cx="60" cy="60" r="50" fill="none" stroke-width="12"
-                        class="stroke-orange-500"
-                        stroke-dasharray="{{ circonference }}"
-                        stroke-dashoffset="{{ (circonference * (1 - pourcentageAFaire / 100) + circonference * ((pourcentageTermine + pourcentageEnCours) / 100))|round(2) }}" />
-            </svg>
+                    <circle cx="60" cy="60" r="50" fill="none" stroke-width="12"
+                            stroke-linecap="round"
+                            class="stroke-orange-500"
+                            stroke-dasharray="{{ lenAFaire|round(2) }} {{ (circonference - lenAFaire)|round(2) }}"
+                            stroke-dashoffset="{{ -(lenTermine + lenEnCours)|round(2) }}" />
+                </svg>
 
-            <div class="space-y-2">
-                <div class="flex items-center gap-2 text-sm">
-                    <span class="w-2.5 h-2.5 rounded-full bg-green-500"></span>
-                    <span class="text-stone-600 dark:text-stone-300">Terminées</span>
-                    <span class="text-stone-400 ml-auto">{{ nbTermine }} ({{ pourcentageTermine|round }}%)</span>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <p class="text-3xl sm:text-4xl font-bold text-stone-900 dark:text-stone-100">{{ pourcentageTermine|round }}%</p>
+                    <p class="text-xs text-stone-400 text-center leading-tight">de tâches<br>terminées</p>
                 </div>
-                <div class="flex items-center gap-2 text-sm">
-                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
-                    <span class="text-stone-600 dark:text-stone-300">En cours</span>
-                    <span class="text-stone-400 ml-auto">{{ nbEnCours }} ({{ pourcentageEnCours|round }}%)</span>
+            </div>
+
+            <div class="w-full sm:w-52 space-y-3 sm:space-y-4">
+                <div class="flex items-center justify-between gap-4">
+                    <span class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-green-500 shrink-0"></span>
+                        <span class="text-stone-600 dark:text-stone-300 text-sm">Terminées</span>
+                    </span>
+                    <span class="text-stone-400 text-sm">{{ nbTermine }} ({{ pourcentageTermine|round }}%)</span>
                 </div>
-                <div class="flex items-center gap-2 text-sm">
-                    <span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span>
-                    <span class="text-stone-600 dark:text-stone-300">En attente</span>
-                    <span class="text-stone-400 ml-auto">{{ nbAFaire }} ({{ pourcentageAFaire|round }}%)</span>
+                <div class="flex items-center justify-between gap-4">
+                    <span class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-blue-500 shrink-0"></span>
+                        <span class="text-stone-600 dark:text-stone-300 text-sm">En cours</span>
+                    </span>
+                    <span class="text-stone-400 text-sm">{{ nbEnCours }} ({{ pourcentageEnCours|round }}%)</span>
+                </div>
+                <div class="flex items-center justify-between gap-4">
+                    <span class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0"></span>
+                        <span class="text-stone-600 dark:text-stone-300 text-sm">En attente</span>
+                    </span>
+                    <span class="text-stone-400 text-sm">{{ nbAFaire }} ({{ pourcentageAFaire|round }}%)</span>
                 </div>
             </div>
         </div>
     </div>
-    
+        
 </div>
 {% endblock %}
