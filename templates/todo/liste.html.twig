@@ -159,9 +159,12 @@
                 {# Durée todo #}
                 {% if todo.duree %}
                     <span class="text-xs text-stone-400 dark:text-stone-500">
-                        {{ (todo.duree / 60)|round(0, 'floor') }}h
-                        {% if todo.duree % 60 != 0 %}
-                            {{ todo.duree % 60 }}
+                        {% if todo.duree < 60 %}
+                            {{ todo.duree }} min
+                        {% elseif todo.duree % 60 == 0 %}
+                            {{ (todo.duree / 60)|round(0, 'floor') }}h
+                        {% else %}
+                            {{ (todo.duree / 60)|round(0, 'floor') }}h {{ todo.duree % 60 }}min
                         {% endif %}
                     </span>
                 {% endif %}
