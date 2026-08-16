@@ -8,6 +8,7 @@ use App\Enum\Statut;
 use App\Enum\Importance;
 use App\Repository\TodoRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Repository\Exception\InvalidFindByCall;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,9 +30,40 @@ class TodoController extends AbstractController
             $todos = $todoRepository->findAll();
         }
 
+        $todosAFaire = $todoRepository->findBy(['statut' => Statut::A_FAIRE]);
+
+        $poidsImportance = [
+            'urgente' => 1,
+            'importante' => 2,
+            'normale' => 3,
+        ];
+
+        usort($todosAFaire, function ($a, $b) use ($poidsImportance) {
+            $poidsA = $poidsImportance[$a->getImportance()->value];
+            $poidsB = $poidsImportance[$b->getImportance()->value];
+
+            if ($poidsA === $poidsB) {
+                $dateA = $a->getDateFin();
+                $dateB = $b->getDateFin();
+
+                if ($dateA !== null && $dateB === null) {
+                    return -1;
+                }
+
+                if ($dateA === null && $dateB !== null) {
+                    return 1;
+                }
+
+                return $dateA <=> $dateB;
+            }
+
+            return $poidsA <=> $poidsB;
+        });
+
         return $this->render('todo/liste.html.twig', [
             'todos' => $todos,
             'filtre' => $filtre,
+            'tacheNow' => $todosAFaire[0] ?? null,
         ]);
     }
 

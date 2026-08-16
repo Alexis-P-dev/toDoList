@@ -87,11 +87,11 @@
         </a>
     </div>
 
-    {# Changement statut #}
     <ul class="space-y-3">
         {% for todo in todos %}
             <li class="flex items-center gap-3 rounded-xl bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 px-4 py-4 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all">
 
+                {# Changement statut #}
                 <button type="button" onclick="document.getElementById('modale-{{ todo.id }}').showModal()"
                     class="relative shrink-0 flex items-center justify-center w-6 h-6 rounded-full border-2 active:scale-95 transition-all {% if todo.statut.value == 'termine' %}bg-green-600 border-green-600{% elseif todo.statut.value == 'en_cours' %}bg-transparent border-transparent{% else %}border-stone-300 dark:border-slate-600{% endif %}">
 
@@ -210,6 +210,42 @@
                 <p class="mt-1 text-sm text-stone-400 dark:text-stone-500">Ajoutez vos tâches et accomplissez-les chaque jour.</p>
             </li>
         {% endfor %}
+
+        {# tacheNow #}
+        {% if tacheNow and filtre is null %}
+            <div class="mt-8 rounded-2xl bg-violet-600 p-6 text-white">
+                <p class="text-sm font-medium opacity-80">🎯 Maintenant</p>
+                <h3 class="text-xl font-bold mt-1">{{ tacheNow.titre }}</h3>
+
+                <div class="flex items-center gap-3 mt-2 text-sm opacity-90">
+                    {% if tacheNow.duree %}
+                        <span>⏱ 
+                            {% if tacheNow.duree < 60 %}
+                                {{ tacheNow.duree }} min
+                            {% elseif tacheNow.duree % 60 == 0 %}
+                                {{ (tacheNow.duree / 60)|round(0, 'floor') }}h
+                            {% else %}
+                                {{ (tacheNow.duree / 60)|round(0, 'floor') }}h {{ tacheNow.duree % 60 }}min
+                            {% endif %}
+                        </span>
+                    {% endif %}
+
+                    {% if tacheNow.importance.value == 'urgente' %}
+                        <span>🔴 Urgente</span>
+                    {% elseif tacheNow.importance.value == 'importante' %}
+                        <span>🟠 Importante</span>
+                    {% else %}
+                        <span>🟢 Normale</span>
+                    {% endif %}
+                </div>
+
+                <button type="button"
+                        onclick="document.getElementById('modale-{{ tacheNow.id }}').showModal()"
+                        class="mt-4 w-full rounded-lg bg-white text-violet-600 font-semibold py-2.5 active:scale-95 transition-all">
+                    Commencer
+                </button>
+            </div>
+        {% endif %}
     </ul>
 
 </div>
