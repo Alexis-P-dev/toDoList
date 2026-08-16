@@ -159,7 +159,7 @@
                 {# Durée todo #}
                 {% if todo.duree %}
                     <span class="text-xs text-stone-400 dark:text-stone-500">
-                        {{ todo.duree }} min
+                        {{ (todo.duree / 60)|round(0, 'floor') }}h{{ todo.duree % 60 }}
                     </span>
                 {% endif %}
 
