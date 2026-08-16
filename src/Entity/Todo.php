@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\Importance;
 use App\Enum\Statut;
 use App\Repository\TodoRepository;
 use Doctrine\DBAL\Types\Types;
@@ -23,6 +24,12 @@ class Todo
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTime $dateFin = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $duree = null;
+
+    #[ORM\Column(enumType: Importance::class)]
+    private ?Importance $importance = null;
 
     public function getId(): ?int
     {
@@ -61,6 +68,30 @@ class Todo
     public function setDateFin(?\DateTime $dateFin): static
     {
         $this->dateFin = $dateFin;
+
+        return $this;
+    }
+
+    public function getDuree(): ?int
+    {
+        return $this->duree;
+    }
+
+    public function setDuree(?int $duree): static
+    {
+        $this->duree = $duree;
+
+        return $this;
+    }
+
+    public function getImportance(): ?Importance
+    {
+        return $this->importance;
+    }
+
+    public function setImportance(Importance $importance): static
+    {
+        $this->importance = $importance;
 
         return $this;
     }

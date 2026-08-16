@@ -5,6 +5,7 @@ namespace App\Controller;
 use DateTime;
 use App\Entity\Todo;
 use App\Enum\Statut;
+use App\Enum\Importance;
 use App\Repository\TodoRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Attribute\Route;
@@ -39,6 +40,9 @@ class TodoController extends AbstractController
     {
         $titre = $request->request->get('titre');
         $dateFin = $request->request->get('dateFin');
+        $heures = $request->request->get('heures');
+        $minutes = $request->request->get('minutes');
+        $importance = $request->request->get('importance');
 
         if ($titre === '') {
             $this->addFlash('erreur', 'Le titre est obligatoire');
@@ -48,9 +52,15 @@ class TodoController extends AbstractController
         $todo = new Todo();
         $todo->setTitre($titre);
         $todo->setStatut(Statut::A_FAIRE);
+        $todo->setImportance(Importance::from($importance));
 
         if (!empty($dateFin)) {
             $todo->setDateFin(DateTime::createFromFormat('Y-m-d', $dateFin));
+        }
+
+        if (!empty($heures) || !empty($minutes)) {
+            $duree = intval($heures) * 60 + intval($minutes);
+            $todo->setDuree($duree);
         }
         
         $entityManager->persist($todo);

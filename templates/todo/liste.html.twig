@@ -40,6 +40,26 @@
                     class="w-full rounded-lg border border-stone-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500">
             </div>
 
+            <div>
+                <label class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Durée (optionnel)</label>
+                <div class="flex items-center gap-2">
+                    <input type="number" name="heures" id="heures" placeholder="h"
+                        class="w-full rounded-lg border border-stone-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500">
+                    <input type="number" name="minutes" id="minutes" min="0" max="59" placeholder="min"
+                        class="w-full rounded-lg border border-stone-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 out-of-range:border-red-500">
+                </div>
+            </div>
+            
+            <div>
+                <label for="modaleImportance" class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Importance</label>
+                <select name="importance" id="modaleImportance"
+                        class="w-full rounded-lg border border-stone-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500">
+                    <option value="urgente">🔴 Urgente</option>
+                    <option value="importante">🟠 Importante</option>
+                    <option value="normale" selected>🟢 Normale</option>
+                </select>
+            </div>
+
             <button type="submit"
                     class="w-full rounded-lg bg-violet-600 hover:bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm active:scale-95 transition-all">
                 Ajouter la tâche
@@ -134,8 +154,21 @@
                 </dialog>
                 
                 {# Titre todo #}
-                <span class="flex-1 font-medium {% if todo.statut.value == 'termine' %}line-through text-stone-400 dark:text-stone-500{% else %}text-stone-800 dark:text-stone-100{% endif %}">{{ todo.titre }}</span>
+                <span class="flex-1 font-medium text-sm sm:text-base {% if todo.statut.value == 'termine' %}line-through text-stone-400 dark:text-stone-500{% else %}text-stone-800 dark:text-stone-100{% endif %}">{{ todo.titre }}</span>
                 
+                {# Durée todo #}
+                {% if todo.duree %}
+                    <span class="text-xs text-stone-400 dark:text-stone-500">
+                        {% if todo.duree < 60 %}
+                            {{ todo.duree }} min
+                        {% elseif todo.duree % 60 == 0 %}
+                            {{ (todo.duree / 60)|round(0, 'floor') }}h
+                        {% else %}
+                            {{ (todo.duree / 60)|round(0, 'floor') }}h {{ todo.duree % 60 }}min
+                        {% endif %}
+                    </span>
+                {% endif %}
+
                 {# Date todo #}
                 {% if todo.dateFin %}
                     <span class="text-xs text-stone-400 dark:text-stone-500">
@@ -148,6 +181,9 @@
                         {% endif %}
                     </span>
                 {% endif %}
+
+                {# Importance todo #}
+                <span class="w-2.5 h-2.5 rounded-full {% if todo.importance.value == 'normale' %}bg-green-600{% elseif todo.importance.value == 'importante' %}bg-orange-600{% else %}bg-red-600{% endif %}"></span>
 
                 {# Modifier todo #}
                 <a href="{{ path('todo_modifier', {id: todo.id}) }}"
