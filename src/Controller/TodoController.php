@@ -106,30 +106,41 @@ class TodoController extends AbstractController
         return $this->redirectToRoute('todo_liste');
     }
 
-    #[Route('/todo/modifier/{id}', name: 'todo_modifier', methods: ['GET','POST'])]
+    #[Route('/todo/modifier/{id}', name: 'todo_modifier', methods: ['POST'])]
     public function modifier(int $id, Request $request, TodoRepository $todoRepository, EntityManagerInterface $entityManager)
     {
         $todo = $todoRepository->find($id);
 
-        if ($request->isMethod('POST')) {
-            $titre = $request->request->get('newTitre');
+        $titre = $request->request->get('newTitre');
+        $description = $request->request->get('description');
+        $dateFin = $request->request->get('dateFin');
+        $heures = $request->request->get('heures');
+        $minutes = $request->request->get('minutes');
+        $importance = $request->request->get('importance');
 
-            if ($titre === '') {
-                return $this->render('todo/modifier.html.twig', [
-                    'erreur' => 'Le titre est obligatoire',
-                    'todo' => $todo,
-                ]);
-            }
-
-            $todo->setTitre($titre);
-            $entityManager->flush();
-
+        if ($titre === '') {
+            $this->addFlash('erreur', 'Le titre est obligatoire');
             return $this->redirectToRoute('todo_liste');
         }
 
-        return $this->render('todo/modifier.html.twig', [
-            'todo' => $todo,
-        ]);
+        if (!empty($description)) {
+            $todo->setDescription($description);
+        }
+
+        if (!empty($dateFin)) {
+            $todo->setDateFin(DateTime::createFromFormat('Y-m-d', $dateFin));
+        }
+
+        if (!empty($heures) || !empty($minutes)) {
+            $duree = intval($heures) * 60 + intval($minutes);
+            $todo->setDuree($duree);
+        }
+
+        $todo->setTitre($titre);
+        $todo->setImportance(Importance::from($importance));
+        $entityManager->flush();
+
+        return $this->redirectToRoute('todo_liste');
     }
 
     #[Route('/todo/supprimer/{id}', name: 'todo_supprimer', methods: ['POST'])]
