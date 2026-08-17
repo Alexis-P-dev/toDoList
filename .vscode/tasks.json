@@ -1,0 +1,35 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Tailwind watch",
+      "type": "shell",
+      "command": "php bin/console tailwind:build --watch",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "devserver"
+      },
+      "problemMatcher": [],
+      "isBackground": true
+    },
+    {
+      "label": "PHP server",
+      "type": "shell",
+      "command": "php -S 0.0.0.0:8000 -t public",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "devserver"
+      },
+      "problemMatcher": [],
+      "isBackground": true
+    },
+    {
+      "label": "Lancer le serveur de dev",
+      "dependsOn": ["Tailwind watch", "PHP server"],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    }
+  ]
+}
