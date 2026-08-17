@@ -4,7 +4,7 @@
 <div class="max-w-2xl mx-auto px-4 md:px-8 py-6">
 
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6">
-        <div class="rounded-xl bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 p-4">
+        <div class="rounded-xl bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 p-4 flex flex-col items-start animate-fade-slide-up" style="animation-delay: 0ms">
             <div class="w-9 h-9 rounded-lg bg-violet-600 flex items-center justify-center mb-2">
                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -14,7 +14,7 @@
             <p class="text-sm text-stone-500 dark:text-stone-400">Total</p>
         </div>
 
-        <div class="rounded-xl bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 p-4">
+        <div class="rounded-xl bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 p-4 flex flex-col items-start animate-fade-slide-up" style="animation-delay: 100ms">
             <div class="w-9 h-9 rounded-lg bg-orange-500 flex items-center justify-center mb-2">
                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -24,7 +24,7 @@
             <p class="text-sm text-stone-500 dark:text-stone-400">En attente</p>
         </div>
 
-        <div class="rounded-xl bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 p-4">
+        <div class="rounded-xl bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 p-4 flex flex-col items-start animate-fade-slide-up" style="animation-delay: 200ms">    
             <div class="w-9 h-9 rounded-lg bg-blue-500 flex items-center justify-center mb-2">
                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
@@ -35,7 +35,7 @@
             <p class="text-sm text-stone-500 dark:text-stone-400">En cours</p>
         </div>
 
-        <div class="rounded-xl bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 p-4">
+        <div class="rounded-xl bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 p-4 flex flex-col items-start animate-fade-slide-up" style="animation-delay: 300ms">
             <div class="w-9 h-9 rounded-lg bg-green-500 flex items-center justify-center mb-2">
                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -62,19 +62,19 @@
 
                     <circle cx="60" cy="60" r="50" fill="none" stroke-width="12"
                             stroke-linecap="round"
-                            class="stroke-green-500"
+                            class="stroke-green-500 donut-segment"
                             stroke-dasharray="{{ lenTermine|round(2) }} {{ (circonference - lenTermine)|round(2) }}"
                             stroke-dashoffset="0" />
 
                     <circle cx="60" cy="60" r="50" fill="none" stroke-width="12"
                             stroke-linecap="round"
-                            class="stroke-blue-500"
+                            class="stroke-blue-500 donut-segment"
                             stroke-dasharray="{{ lenEnCours|round(2) }} {{ (circonference - lenEnCours)|round(2) }}"
                             stroke-dashoffset="{{ -lenTermine|round(2) }}" />
 
                     <circle cx="60" cy="60" r="50" fill="none" stroke-width="12"
                             stroke-linecap="round"
-                            class="stroke-orange-500"
+                            class="stroke-orange-500 donut-segment"
                             stroke-dasharray="{{ lenAFaire|round(2) }} {{ (circonference - lenAFaire)|round(2) }}"
                             stroke-dashoffset="{{ -(lenTermine + lenEnCours)|round(2) }}" />
                 </svg>
