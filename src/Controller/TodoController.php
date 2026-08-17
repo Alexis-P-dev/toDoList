@@ -71,6 +71,7 @@ class TodoController extends AbstractController
     public function nouveau(Request $request, EntityManagerInterface $entityManager)
     {
         $titre = $request->request->get('titre');
+        $description = $request->request->get('description');
         $dateFin = $request->request->get('dateFin');
         $heures = $request->request->get('heures');
         $minutes = $request->request->get('minutes');
@@ -85,6 +86,10 @@ class TodoController extends AbstractController
         $todo->setTitre($titre);
         $todo->setStatut(Statut::A_FAIRE);
         $todo->setImportance(Importance::from($importance));
+
+        if (!empty($description)) {
+            $todo->setDescription($description);
+        }
 
         if (!empty($dateFin)) {
             $todo->setDateFin(DateTime::createFromFormat('Y-m-d', $dateFin));
