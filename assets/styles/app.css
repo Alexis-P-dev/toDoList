@@ -64,3 +64,18 @@ dialog.sheet[open]::backdrop {
         stroke-dashoffset: 69.12;
     }
 }
+
+@keyframes fade-slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-slide-up {
+    animation: fade-slide-up 0.5s ease-out both;
+}
