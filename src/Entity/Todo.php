@@ -31,6 +31,9 @@ class Todo
     #[ORM\Column(enumType: Importance::class)]
     private ?Importance $importance = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -92,6 +95,18 @@ class Todo
     public function setImportance(Importance $importance): static
     {
         $this->importance = $importance;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }
