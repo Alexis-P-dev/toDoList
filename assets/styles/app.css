@@ -99,6 +99,7 @@ dialog.sheet[open]::backdrop {
     content: "";
     position: absolute;
     inset: 0;
+    pointer-events: none;
     background: linear-gradient(
         100deg,
         transparent 45%,
@@ -107,7 +108,7 @@ dialog.sheet[open]::backdrop {
     );
     background-size: 200% 100%;
     background-position: 150% 0;
-    animation: shimmer-sweep 2s linear;
+    animation: shimmer-sweep 2s ease-in-out;
 }
 
 @keyframes shimmer-sweep {
