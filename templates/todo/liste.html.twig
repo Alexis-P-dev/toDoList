@@ -100,7 +100,7 @@
                Les boutons internes (statut/modifier/supprimer) stoppent la propagation
                pour garder leur propre action, indépendante du clic sur la carte. #}
             <li onclick="document.getElementById('modale-details-{{ todo.id }}').showModal()"
-                class="flex items-center gap-3 rounded-xl bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 px-4 py-4 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all cursor-pointer">
+                class="flex items-center gap-3 rounded-xl bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 px-4 py-4 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all cursor-pointer animate-fade-slide-up" style="animation-delay: {{ loop.index0 * 100 }}ms">
 
                 {# Rond de statut — ouvre la modale de changement de statut #}
                 <button type="button" onclick="event.stopPropagation(); document.getElementById('modale-statut-{{ todo.id }}').showModal()"
@@ -301,7 +301,7 @@
 
     {# ============ BLOC "NOW" — hors du <ul>, uniquement sur la vue "Toutes" ============ #}
     {% if tacheNow and filtre is null %}
-        <div class="mt-8 rounded-2xl bg-violet-600 p-6 text-white">
+        <div class="mt-8 rounded-2xl bg-violet-600 p-6 text-white animate-shimmer">
             <p class="text-sm font-medium opacity-80">🎯 Maintenant</p>
             <h3 class="text-xl font-bold mt-1">{{ tacheNow.titre }}</h3>
 
