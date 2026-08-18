@@ -3,11 +3,12 @@
 {% block body %}
 <div class="max-w-2xl mx-auto px-4 md:px-8 py-6">
 
+    {# Messages d'erreur (ex: titre vide à la création) #}
     {% for message in app.flashes('erreur') %}
         <p class="mb-4 rounded-lg bg-red-50 dark:bg-red-500/10 px-4 py-3 text-sm text-red-700 dark:text-red-400 border border-red-200 dark:border-red-500/30">{{ message }}</p>
     {% endfor %}
 
-    {# input new todo #}
+    {# ============ BARRE D'AJOUT RAPIDE ============ #}
     <div class="flex items-center justify-between rounded-xl bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 px-4 py-3 mb-4 focus-within:border-violet-300 dark:focus-within:border-violet-500 transition-colors">
         <input type="text" id="todoTitre" placeholder="Ajouter une tâche..."
             class="flex-1 bg-transparent text-stone-800 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500 focus:outline-none">
@@ -18,8 +19,8 @@
         </button>
     </div>
 
-    {# popup new todo #}
-    <dialog id="modale-nouveau" class="sheet fixed inset-x-0 bottom-0 top-auto m-0 w-full max-w-full rounded-t-2xl p-6 bg-white dark:bg-slate-800">
+    {# Modale de création — le champ titre est pré-rempli en JS depuis la barre ci-dessus #}
+    <dialog id="modale-nouveau" class="sheet fixed inset-x-0 bottom-0 top-auto m-0 w-full max-w-full rounded-t-2xl p-6 bg-white dark:bg-slate-800 overflow-y-auto max-h-[85vh]">
         <div class="flex justify-end">
             <button type="button" onclick="document.getElementById('modale-nouveau').close()"
                     class="text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 active:scale-95 transition-all">✕</button>
@@ -35,7 +36,7 @@
 
             <div>
                 <label for="description" class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Description (optionnel)</label>
-                <textarea id="description" name="description" rows="3" 
+                <textarea id="description" name="description" rows="3"
                     class="w-full rounded-lg border border-stone-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500"></textarea>
             </div>
 
@@ -54,7 +55,7 @@
                         class="w-full rounded-lg border border-stone-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 out-of-range:border-red-500">
                 </div>
             </div>
-            
+
             <div>
                 <label for="modaleImportance" class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Importance</label>
                 <select name="importance" id="modaleImportance"
@@ -72,7 +73,7 @@
         </form>
     </dialog>
 
-    {# Filtre todo #}
+    {# ============ ONGLETS DE FILTRE ============ #}
     <div class="flex items-center gap-2 mb-6">
         <a href="{{ path('todo_liste') }}"
         class="flex-1 sm:flex-none rounded-lg text-sm font-medium px-2 sm:px-4 py-2 text-center {% if filtre is null %}bg-violet-600 text-white{% else %}text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-slate-800{% endif %}">
@@ -92,15 +93,18 @@
         </a>
     </div>
 
+    {# ============ LISTE DES TÂCHES ============ #}
     <ul class="space-y-3">
         {% for todo in todos %}
+            {# Carte todo — un clic n'importe où dessus ouvre la modale de détails.
+               Les boutons internes (statut/modifier/supprimer) stoppent la propagation
+               pour garder leur propre action, indépendante du clic sur la carte. #}
             <li onclick="document.getElementById('modale-details-{{ todo.id }}').showModal()"
                 class="flex items-center gap-3 rounded-xl bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 px-4 py-4 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all cursor-pointer">
 
-                {# Changement statut (A faire, En cours ou Terminée)#}
-                <button type="button" onclick="event.stopPropagation(); document.getElementById('modale-{{ todo.id }}').showModal()"
+                {# Rond de statut — ouvre la modale de changement de statut #}
+                <button type="button" onclick="event.stopPropagation(); document.getElementById('modale-statut-{{ todo.id }}').showModal()"
                     class="relative shrink-0 flex items-center justify-center w-6 h-6 rounded-full border-2 active:scale-95 transition-all {% if todo.statut.value == 'termine' %}bg-green-600 border-green-600{% elseif todo.statut.value == 'en_cours' %}bg-transparent border-transparent{% else %}border-stone-300 dark:border-slate-600{% endif %}">
-
                     {% if todo.statut.value == 'termine' %}
                         <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
                             <path class="checkmark-path" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -112,57 +116,10 @@
                     {% endif %}
                 </button>
 
-                <dialog id="modale-{{ todo.id }}" class="sheet fixed inset-x-0 bottom-0 top-auto m-0 w-full max-w-full rounded-t-2xl p-6 bg-white dark:bg-slate-800">
-                    <div class="flex justify-end">
-                        <button type="button" onclick="document.getElementById('modale-{{ todo.id }}').close()"
-                                class="text-stone-400 hover:text-stone-600 dark:hover:text-stone-200">✕</button>
-                    </div>
-
-                    <h3 class="text-center font-bold text-lg text-stone-900 dark:text-stone-100 mt-2">Marquer cette tâche comme...</h3>
-                    <p class="text-center text-sm text-stone-500 dark:text-stone-400 mt-1 mb-6">Choisissez le statut de cette tâche</p>
-
-                    <div class="space-y-3">
-                        <form method="post" action="{{ path('todo_statut', {id: todo.id, statut: 'a_faire'}) }}">
-                            <button type="submit" class="w-full flex items-center gap-3 text-left rounded-xl border border-stone-200 dark:border-slate-700 px-4 py-3 hover:bg-stone-50 dark:hover:bg-slate-700 active:scale-95 transition-all">
-                                <span class="shrink-0 w-6 h-6 rounded-full border-2 border-stone-300 dark:border-slate-600"></span>
-                                <span>
-                                    <span class="block font-semibold text-stone-900 dark:text-stone-100">À faire</span>
-                                    <span class="block text-sm text-stone-500 dark:text-stone-400">Remettre cette tâche en attente</span>
-                                </span>
-                            </button>
-                        </form>
-
-                        <form method="post" action="{{ path('todo_statut', {id: todo.id, statut: 'en_cours'}) }}">
-                            <button type="submit" class="w-full flex items-center gap-3 text-left rounded-xl border border-stone-200 dark:border-slate-700 px-4 py-3 hover:bg-stone-50 dark:hover:bg-slate-700 active:scale-95 transition-all">
-                                <span class="shrink-0 w-6 h-6 rounded-full border-2 border-blue-600"></span>
-                                <span>
-                                    <span class="block font-semibold text-stone-900 dark:text-stone-100">En cours</span>
-                                    <span class="block text-sm text-stone-500 dark:text-stone-400">Je commence à travailler dessus</span>
-                                </span>
-                            </button>
-                        </form>
-
-                        <form method="post" action="{{ path('todo_statut', {id: todo.id, statut: 'termine'}) }}">
-                            <button type="submit" class="w-full flex items-center gap-3 text-left rounded-xl border border-stone-200 dark:border-slate-700 px-4 py-3 hover:bg-stone-50 dark:hover:bg-slate-700 active:scale-95 transition-all">
-                                <span class="shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-green-600">
-                                    <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                    </svg>
-                                </span>
-                                <span>
-                                    <span class="block font-semibold text-stone-900 dark:text-stone-100">Terminée</span>
-                                    <span class="block text-sm text-stone-500 dark:text-stone-400">J'ai terminé cette tâche</span>
-                                </span>
-                            </button>
-                        </form>
-
-                    </div>
-                </dialog>
-                
-                {# Titre todo #}
+                {# Titre #}
                 <span class="flex-1 font-medium text-sm sm:text-base {% if todo.statut.value == 'termine' %}line-through text-stone-400 dark:text-stone-500{% else %}text-stone-800 dark:text-stone-100{% endif %}">{{ todo.titre }}</span>
-            
-                {# Durée todo #}
+
+                {# Durée (formatée en "Xh Ymin") #}
                 {% if todo.duree %}
                     <span class="text-xs text-stone-400 dark:text-stone-500">
                         {% if todo.duree < 60 %}
@@ -175,7 +132,7 @@
                     </span>
                 {% endif %}
 
-                {# Date todo #}
+                {# Date d'échéance (Aujourd'hui / Demain / date normale) #}
                 {% if todo.dateFin %}
                     <span class="text-xs text-stone-400 dark:text-stone-500">
                         {% if todo.dateFin|date('Y-m-d') == "now"|date('Y-m-d') %}
@@ -188,18 +145,18 @@
                     </span>
                 {% endif %}
 
-                {# Importance todo #}
+                {# Pastille d'importance #}
                 <span class="w-2.5 h-2.5 rounded-full {% if todo.importance.value == 'normale' %}bg-green-600{% elseif todo.importance.value == 'importante' %}bg-orange-600{% else %}bg-red-600{% endif %}"></span>
 
-                {# Modifier todo #}
-                <a href="{{ path('todo_modifier', {id: todo.id}) }}" onclick="event.stopPropagation();"
-                   class="shrink-0 rounded-lg p-2 text-stone-400 dark:text-stone-500 hover:bg-stone-100 dark:hover:bg-slate-700 hover:text-stone-600 dark:hover:text-stone-300 active:scale-95 transition-all">
+                {# Bouton Modifier — ouvre la modale de modification #}
+                <button type="button" onclick="event.stopPropagation(); document.getElementById('modale-modifier-{{ todo.id }}').showModal();"
+                        class="shrink-0 rounded-lg p-2 text-stone-400 dark:text-stone-500 hover:bg-stone-100 dark:hover:bg-slate-700 hover:text-stone-600 dark:hover:text-stone-300 active:scale-95 transition-all">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
-                </a>
-                
-                {# Suprimer todo #}
+                </button>
+
+                {# Bouton Supprimer #}
                 <form method="post" action="{{ path('todo_supprimer', {id: todo.id}) }}" class="shrink-0">
                     <button type="submit" onclick="event.stopPropagation();"
                             class="rounded-lg p-2 text-stone-400 dark:text-stone-500 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-500 active:scale-95 transition-all">
@@ -208,10 +165,116 @@
                         </svg>
                     </button>
                 </form>
-
             </li>
 
-            {# popup todo details #}
+            {# ---- Modales de ce todo ----
+               Placées en dehors du <li> (comme "voisines"), pas à l'intérieur :
+               ainsi aucun clic à l'intérieur d'elles ne peut jamais remonter
+               vers le onclick global du <li>, sans avoir besoin de stopPropagation
+               sur chaque élément qu'elles contiennent. #}
+
+            {# Modale : changement de statut #}
+            <dialog id="modale-statut-{{ todo.id }}" class="sheet fixed inset-x-0 bottom-0 top-auto m-0 w-full max-w-full rounded-t-2xl p-6 bg-white dark:bg-slate-800">
+                <div class="flex justify-end">
+                    <button type="button" onclick="document.getElementById('modale-statut-{{ todo.id }}').close()"
+                            class="text-stone-400 hover:text-stone-600 dark:hover:text-stone-200">✕</button>
+                </div>
+
+                <h3 class="text-center font-bold text-lg text-stone-900 dark:text-stone-100 mt-2">Marquer cette tâche comme...</h3>
+                <p class="text-center text-sm text-stone-500 dark:text-stone-400 mt-1 mb-6">Choisissez le statut de cette tâche</p>
+
+                <div class="space-y-3">
+                    <form method="post" action="{{ path('todo_statut', {id: todo.id, statut: 'a_faire'}) }}">
+                        <button type="submit" class="w-full flex items-center gap-3 text-left rounded-xl border border-stone-200 dark:border-slate-700 px-4 py-3 hover:bg-stone-50 dark:hover:bg-slate-700 active:scale-95 transition-all">
+                            <span class="shrink-0 w-6 h-6 rounded-full border-2 border-stone-300 dark:border-slate-600"></span>
+                            <span>
+                                <span class="block font-semibold text-stone-900 dark:text-stone-100">À faire</span>
+                                <span class="block text-sm text-stone-500 dark:text-stone-400">Remettre cette tâche en attente</span>
+                            </span>
+                        </button>
+                    </form>
+
+                    <form method="post" action="{{ path('todo_statut', {id: todo.id, statut: 'en_cours'}) }}">
+                        <button type="submit" class="w-full flex items-center gap-3 text-left rounded-xl border border-stone-200 dark:border-slate-700 px-4 py-3 hover:bg-stone-50 dark:hover:bg-slate-700 active:scale-95 transition-all">
+                            <span class="shrink-0 w-6 h-6 rounded-full border-2 border-blue-600"></span>
+                            <span>
+                                <span class="block font-semibold text-stone-900 dark:text-stone-100">En cours</span>
+                                <span class="block text-sm text-stone-500 dark:text-stone-400">Je commence à travailler dessus</span>
+                            </span>
+                        </button>
+                    </form>
+
+                    <form method="post" action="{{ path('todo_statut', {id: todo.id, statut: 'termine'}) }}">
+                        <button type="submit" class="w-full flex items-center gap-3 text-left rounded-xl border border-stone-200 dark:border-slate-700 px-4 py-3 hover:bg-stone-50 dark:hover:bg-slate-700 active:scale-95 transition-all">
+                            <span class="shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-green-600">
+                                <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                            </span>
+                            <span>
+                                <span class="block font-semibold text-stone-900 dark:text-stone-100">Terminée</span>
+                                <span class="block text-sm text-stone-500 dark:text-stone-400">J'ai terminé cette tâche</span>
+                            </span>
+                        </button>
+                    </form>
+                </div>
+            </dialog>
+
+            {# Modale : modification (titre, description, date, durée, importance) #}
+            <dialog id="modale-modifier-{{ todo.id }}" class="sheet fixed inset-x-0 bottom-0 top-auto m-0 w-full max-w-full rounded-t-2xl p-6 bg-white dark:bg-slate-800 overflow-y-auto max-h-[85vh]">
+                <div class="flex justify-end">
+                    <button type="button" onclick="document.getElementById('modale-modifier-{{ todo.id }}').close()"
+                            class="text-stone-400 hover:text-stone-600 dark:hover:text-stone-200">✕</button>
+                </div>
+
+                <h3 class="text-xl font-bold text-stone-900 dark:text-stone-100 mt-2 mb-4">Modifier la tâche</h3>
+
+                <form method="post" action="{{ path('todo_modifier', {id: todo.id}) }}" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Titre</label>
+                        <input type="text" name="newTitre" value="{{ todo.titre }}"
+                            class="w-full rounded-lg border border-stone-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Description (optionnel)</label>
+                        <textarea name="description" rows="3" class="w-full rounded-lg border border-stone-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500">{{ todo.description }}</textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Date d'échéance (optionnel)</label>
+                        <input type="date" name="dateFin" value="{{ todo.dateFin ? todo.dateFin|date('Y-m-d') : '' }}"
+                            class="w-full rounded-lg border border-stone-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Durée (optionnel)</label>
+                        <div class="flex items-center gap-2">
+                            <input type="number" name="heures" value="{{ todo.duree ? (todo.duree / 60)|round(0, 'floor') : '' }}" placeholder="h"
+                                class="w-full rounded-lg border border-stone-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500">
+                            <input type="number" name="minutes" min="0" max="59" value="{{ todo.duree ? todo.duree % 60 : '' }}" placeholder="min"
+                                class="w-full rounded-lg border border-stone-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 out-of-range:border-red-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">Importance</label>
+                        <select name="importance"
+                                class="w-full rounded-lg border border-stone-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-2.5 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500">
+                            <option value="urgente" {{ todo.importance.value == 'urgente' ? 'selected' }}>🔴 Urgente</option>
+                            <option value="importante" {{ todo.importance.value == 'importante' ? 'selected' }}>🟠 Importante</option>
+                            <option value="normale" {{ todo.importance.value == 'normale' ? 'selected' }}>🟢 Normale</option>
+                        </select>
+                    </div>
+
+                    <button type="submit"
+                            class="w-full rounded-lg bg-violet-600 hover:bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm active:scale-95 transition-all">
+                        Enregistrer
+                    </button>
+                </form>
+            </dialog>
+
+            {# Modale : détails (titre + description en lecture) #}
             <dialog id="modale-details-{{ todo.id }}" class="sheet fixed inset-x-0 bottom-0 top-auto m-0 w-full max-w-full rounded-t-2xl p-6 bg-white dark:bg-slate-800">
                 <div class="flex justify-end">
                     <button type="button" onclick="document.getElementById('modale-details-{{ todo.id }}').close()"
@@ -226,50 +289,51 @@
                     <p class="text-stone-400 dark:text-stone-500 italic">Aucune description pour cette tâche.</p>
                 {% endif %}
             </dialog>
-                {% else %}
 
+        {% else %}
+            {# État vide : aucun todo ne correspond au filtre actuel #}
             <li class="rounded-xl border border-dashed border-stone-300 dark:border-slate-700 px-5 py-14 text-center">
                 <p class="font-semibold text-stone-700 dark:text-stone-200">Restez organisé !</p>
                 <p class="mt-1 text-sm text-stone-400 dark:text-stone-500">Ajoutez vos tâches et accomplissez-les chaque jour.</p>
             </li>
         {% endfor %}
-
-        {# tacheNow #}
-        {% if tacheNow and filtre is null %}
-            <div class="mt-8 rounded-2xl bg-violet-600 p-6 text-white">
-                <p class="text-sm font-medium opacity-80">🎯 Maintenant</p>
-                <h3 class="text-xl font-bold mt-1">{{ tacheNow.titre }}</h3>
-
-                <div class="flex items-center gap-3 mt-2 text-sm opacity-90">
-                    {% if tacheNow.duree %}
-                        <span>⏱ 
-                            {% if tacheNow.duree < 60 %}
-                                {{ tacheNow.duree }} min
-                            {% elseif tacheNow.duree % 60 == 0 %}
-                                {{ (tacheNow.duree / 60)|round(0, 'floor') }}h
-                            {% else %}
-                                {{ (tacheNow.duree / 60)|round(0, 'floor') }}h {{ tacheNow.duree % 60 }}min
-                            {% endif %}
-                        </span>
-                    {% endif %}
-
-                    {% if tacheNow.importance.value == 'urgente' %}
-                        <span>🔴 Urgente</span>
-                    {% elseif tacheNow.importance.value == 'importante' %}
-                        <span>🟠 Importante</span>
-                    {% else %}
-                        <span>🟢 Normale</span>
-                    {% endif %}
-                </div>
-
-                <button type="button"
-                        onclick="document.getElementById('modale-{{ tacheNow.id }}').showModal()"
-                        class="mt-4 w-full rounded-lg bg-white text-violet-600 font-semibold py-2.5 active:scale-95 transition-all">
-                    Commencer
-                </button>
-            </div>
-        {% endif %}
     </ul>
+
+    {# ============ BLOC "NOW" — hors du <ul>, uniquement sur la vue "Toutes" ============ #}
+    {% if tacheNow and filtre is null %}
+        <div class="mt-8 rounded-2xl bg-violet-600 p-6 text-white">
+            <p class="text-sm font-medium opacity-80">🎯 Maintenant</p>
+            <h3 class="text-xl font-bold mt-1">{{ tacheNow.titre }}</h3>
+
+            <div class="flex items-center gap-3 mt-2 text-sm opacity-90">
+                {% if tacheNow.duree %}
+                    <span>⏱
+                        {% if tacheNow.duree < 60 %}
+                            {{ tacheNow.duree }} min
+                        {% elseif tacheNow.duree % 60 == 0 %}
+                            {{ (tacheNow.duree / 60)|round(0, 'floor') }}h
+                        {% else %}
+                            {{ (tacheNow.duree / 60)|round(0, 'floor') }}h {{ tacheNow.duree % 60 }}min
+                        {% endif %}
+                    </span>
+                {% endif %}
+
+                {% if tacheNow.importance.value == 'urgente' %}
+                    <span>🔴 Urgente</span>
+                {% elseif tacheNow.importance.value == 'importante' %}
+                    <span>🟠 Importante</span>
+                {% else %}
+                    <span>🟢 Normale</span>
+                {% endif %}
+            </div>
+
+            <button type="button"
+                    onclick="document.getElementById('modale-statut-{{ tacheNow.id }}').showModal()"
+                    class="mt-4 w-full rounded-lg bg-white text-violet-600 font-semibold py-2.5 active:scale-95 transition-all">
+                Commencer
+            </button>
+        </div>
+    {% endif %}
 
 </div>
 {% endblock %}
