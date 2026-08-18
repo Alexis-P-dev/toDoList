@@ -125,15 +125,21 @@ class TodoController extends AbstractController
 
         if (!empty($description)) {
             $todo->setDescription($description);
+        } else {
+            $todo->setDescription(null);
         }
 
         if (!empty($dateFin)) {
             $todo->setDateFin(DateTime::createFromFormat('Y-m-d', $dateFin));
+        } else {
+            $todo->setDateFin(null);
         }
 
         if (!empty($heures) || !empty($minutes)) {
             $duree = intval($heures) * 60 + intval($minutes);
             $todo->setDuree($duree);
+        } else {
+            $todo->setDuree(null);
         }
 
         $todo->setTitre($titre);
