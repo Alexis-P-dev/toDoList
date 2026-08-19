@@ -324,7 +324,7 @@
     </form>
 
     {# Bouton Supprimer les tâches terminées #}
-    {% if nbTermine > 0 and (filtre is null or filtre == 'termine') %}
+    {% if nbTermine > 0 and filtre == 'termine' %}
         <form method="post" action="{{ path('todo_supprimer_termines') }}" class="mt-4">
             <button type="submit"
                     class="w-full rounded-lg border border-red-200 dark:border-red-500/30 text-red-600 dark:text-red-400 text-sm font-medium py-2.5 hover:bg-red-50 dark:hover:bg-red-500/10 active:scale-95 transition-all">
