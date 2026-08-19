@@ -160,6 +160,20 @@ class TodoController extends AbstractController
         return $this->redirectToRoute('todo_liste');
     }
 
+    #[Route('/todo/supprimerTermines', name: 'todo_supprimer_termines', methods: ['POST'])]
+    public function supprimerTermines(TodoRepository $todoRepository, EntityManagerInterface $entityManager)
+    {
+        $todos = $todoRepository->findBy(['statut' => Statut::TERMINE]);
+
+        foreach ($todos as $todo) {
+            $entityManager->remove($todo);
+        }
+
+        $entityManager->flush();
+
+        return $this->redirectToRoute('todo_liste');
+    }
+
     #[Route('/todo/statut/{id}/{statut}', name: 'todo_statut', methods: ['POST'])]
     public function changerStatut(int $id, string $statut, TodoRepository $todoRepository, EntityManagerInterface $entityManager)
     {
