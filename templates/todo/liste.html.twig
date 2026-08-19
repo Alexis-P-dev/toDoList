@@ -101,7 +101,14 @@
                pour garder leur propre action, indépendante du clic sur la carte. #}
             <li class="flex items-center gap-3 rounded-xl bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 px-4 py-4 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all animate-fade-slide-up" style="animation-delay: {{ loop.index0 * 100 }}ms">
 
-                <input type="checkbox" name="todosASupprimer[]" value="{{ todo.id }}" form="form-suppression-groupee">
+                <label class="relative shrink-0 w-5 h-5 flex items-center justify-center">
+                    <input type="checkbox" name="todosASupprimer[]" value="{{ todo.id }}" form="form-suppression-groupee" class="custom-checkbox">
+                    <span class="custom-checkbox-visual">
+                        <svg fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="3">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </span>
+                </label>
                 
                 {# Rond de statut — ouvre la modale de changement de statut #}
                 <button type="button" onclick="document.getElementById('modale-statut-{{ todo.id }}').showModal()"
