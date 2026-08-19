@@ -19,6 +19,7 @@ class TodoController extends AbstractController
     public function liste(TodoRepository $todoRepository, Request $request)
     {
         $filtre = $request->query->get('filtre');
+        $nbTermine = $todoRepository->count(['statut' => Statut::TERMINE]);
 
         if ($filtre === 'termine') {
             $todos = $todoRepository->findBy(['statut' => Statut::TERMINE]);
@@ -64,6 +65,7 @@ class TodoController extends AbstractController
             'todos' => $todos,
             'filtre' => $filtre,
             'tacheNow' => $todosAFaire[0] ?? null,
+            'nbTermine' => $nbTermine,
         ]);
     }
 
@@ -156,6 +158,37 @@ class TodoController extends AbstractController
 
         $entityManager->remove($todo);
         $entityManager->flush();
+
+        return $this->redirectToRoute('todo_liste');
+    }
+
+    #[Route('/todo/supprimerTermines', name: 'todo_supprimer_termines', methods: ['POST'])]
+    public function supprimerTermines(TodoRepository $todoRepository, EntityManagerInterface $entityManager)
+    {
+        $todos = $todoRepository->findBy(['statut' => Statut::TERMINE]);
+
+        foreach ($todos as $todo) {
+            $entityManager->remove($todo);
+        }
+
+        $entityManager->flush();
+
+        return $this->redirectToRoute('todo_liste');
+    }
+
+    #[Route('/todo/suppressionGroupee', name:'suppression_groupee', methods: ['POST'])]
+    public function suppressionGroupee(Request $request, TodoRepository $todoRepository, EntityManagerInterface $entityManager)
+    {
+        $idsASupprimer = $request->request->all('todosASupprimer');
+
+        if (!empty($idsASupprimer)) {
+            foreach( $idsASupprimer as $id) {
+                $todo = $todoRepository->find($id);
+                $entityManager->remove($todo);
+            }
+
+            $entityManager->flush();
+        }
 
         return $this->redirectToRoute('todo_liste');
     }
