@@ -162,23 +162,32 @@ dialog.sheet[open]::backdrop {
     100% { transform: scale(1); }
 }
 
-.selection-checkbox-wrapper,
-#form-suppression-groupee {
-    transition: opacity 0.25s ease, transform 0.25s ease, display 0.25s allow-discrete, overlay 0.25s allow-discrete;
+.selection-checkbox-wrapper {
+    width: 20px;
+    margin-right: 12px;
+    overflow: hidden;
     opacity: 1;
     transform: scale(1);
+    transition: width 0.25s ease, margin-right 0.25s ease, opacity 0.25s ease, transform 0.25s ease;
 }
 
-.selection-checkbox-wrapper.hidden,
-#form-suppression-groupee.hidden {
+.selection-checkbox-wrapper.is-collapsed {
+    width: 0;
+    margin-right: 0;
     opacity: 0;
     transform: scale(0.7);
 }
 
-@starting-style {
-    .selection-checkbox-wrapper:not(.hidden),
-    #form-suppression-groupee:not(.hidden) {
-        opacity: 0;
-        transform: scale(0.7);
-    }
+#form-suppression-groupee {
+    max-height: 100px;
+    opacity: 1;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease, margin-top 0.3s ease;
+    margin-top: 1rem;
+}
+
+#form-suppression-groupee.is-collapsed {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
 }
