@@ -28,12 +28,5 @@ window.toggleModeSelection = function () {
         document.querySelectorAll('.custom-checkbox').forEach(function (checkbox) {
             checkbox.checked = false;
         });
-        mettreAJourCompteurSelection();
     }
-};
-
-window.mettreAJourCompteurSelection = function () {
-    const nombreCoches = document.querySelectorAll('.custom-checkbox:checked').length;
-    const compteur = document.getElementById('compteur-selection');
-    compteur.textContent = nombreCoches + (nombreCoches > 1 ? ' sélectionnées' : ' sélectionnée');
 };

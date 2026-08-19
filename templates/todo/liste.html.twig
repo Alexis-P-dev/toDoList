@@ -116,7 +116,7 @@
                 </label>
 
                 <div class="flex-1 flex items-center gap-3 rounded-xl bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 px-4 py-4 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all">
-                
+
                     {# Rond de statut — ouvre la modale de changement de statut #}
                     <button type="button" onclick="document.getElementById('modale-statut-{{ todo.id }}').showModal()"
                         class="relative shrink-0 flex items-center justify-center w-6 h-6 rounded-full border-2 active:scale-95 transition-all {% if todo.statut.value == 'termine' %}bg-green-600 border-green-600{% elseif todo.statut.value == 'en_cours' %}bg-transparent border-transparent{% else %}border-stone-300 dark:border-slate-600{% endif %}">
@@ -316,7 +316,7 @@
         {% endfor %}
     </ul>
 
-    <form id="form-suppression-groupee" method="post" action="{{ path('suppression_groupee') }}">
+    <form id="form-suppression-groupee" method="post" action="{{ path('suppression_groupee') }}" class="hidden">
         <button type="submit"
                 class="w-full mt-4 rounded-lg border border-red-200 dark:border-red-500/30 text-red-600 dark:text-red-400 text-sm font-medium py-2.5 hover:bg-red-50 dark:hover:bg-red-500/10 active:scale-95 transition-all">
             Supprimer la sélection
