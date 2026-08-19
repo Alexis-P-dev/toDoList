@@ -93,15 +93,20 @@
         </a>
     </div>
 
+    <button type="button" id="btn-toggle-selection" onclick="toggleModeSelection()"
+            class="text-sm font-medium text-violet-600 dark:text-violet-400 mb-3 active:scale-95 transition-all">
+        Sélectionner
+    </button>
+
     {# ============ LISTE DES TÂCHES ============ #}
     <ul class="space-y-3">
         {% for todo in todos %}
             {# Carte todo — un clic n'importe où dessus ouvre la modale de détails.
                Les boutons internes (statut/modifier/supprimer) stoppent la propagation
                pour garder leur propre action, indépendante du clic sur la carte. #}
-            <li class="flex items-center gap-3 rounded-xl bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 px-4 py-4 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all animate-fade-slide-up" style="animation-delay: {{ loop.index0 * 100 }}ms">
+            <li class="flex items-center gap-3 animate-fade-slide-up" style="animation-delay: {{ loop.index0 * 100 }}ms">
 
-                <label class="relative shrink-0 w-5 h-5 flex items-center justify-center">
+                <label class="selection-checkbox-wrapper relative shrink-0 w-5 h-5 hidden items-center justify-center">
                     <input type="checkbox" name="todosASupprimer[]" value="{{ todo.id }}" form="form-suppression-groupee" class="custom-checkbox">
                     <span class="custom-checkbox-visual">
                         <svg fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="3">
@@ -109,71 +114,74 @@
                         </svg>
                     </span>
                 </label>
+
+                <div class="flex-1 flex items-center gap-3 rounded-xl bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 px-4 py-4 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all">
                 
-                {# Rond de statut — ouvre la modale de changement de statut #}
-                <button type="button" onclick="document.getElementById('modale-statut-{{ todo.id }}').showModal()"
-                    class="relative shrink-0 flex items-center justify-center w-6 h-6 rounded-full border-2 active:scale-95 transition-all {% if todo.statut.value == 'termine' %}bg-green-600 border-green-600{% elseif todo.statut.value == 'en_cours' %}bg-transparent border-transparent{% else %}border-stone-300 dark:border-slate-600{% endif %}">
-                    {% if todo.statut.value == 'termine' %}
-                        <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
-                            <path class="checkmark-path" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                    {% elseif todo.statut.value == 'en_cours' %}
-                        <svg class="absolute inset-0 w-full h-full text-blue-600" viewBox="0 0 24 24" stroke="currentColor">
-                            <circle class="loading-circle" cx="12" cy="12" r="11" />
-                        </svg>
+                    {# Rond de statut — ouvre la modale de changement de statut #}
+                    <button type="button" onclick="document.getElementById('modale-statut-{{ todo.id }}').showModal()"
+                        class="relative shrink-0 flex items-center justify-center w-6 h-6 rounded-full border-2 active:scale-95 transition-all {% if todo.statut.value == 'termine' %}bg-green-600 border-green-600{% elseif todo.statut.value == 'en_cours' %}bg-transparent border-transparent{% else %}border-stone-300 dark:border-slate-600{% endif %}">
+                        {% if todo.statut.value == 'termine' %}
+                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                                <path class="checkmark-path" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                        {% elseif todo.statut.value == 'en_cours' %}
+                            <svg class="absolute inset-0 w-full h-full text-blue-600" viewBox="0 0 24 24" stroke="currentColor">
+                                <circle class="loading-circle" cx="12" cy="12" r="11" />
+                            </svg>
+                        {% endif %}
+                    </button>
+
+                    {# Titre #}
+                    <span onclick="document.getElementById('modale-details-{{ todo.id }}').showModal()"
+                        class="flex-1 font-medium text-sm sm:text-base cursor-pointer {% if todo.statut.value == 'termine' %}line-through text-stone-400 dark:text-stone-500{% else %}text-stone-800 dark:text-stone-100{% endif %}">{{ todo.titre }}</span>
+
+                    {# Durée (formatée en "Xh Ymin") #}
+                    {% if todo.duree %}
+                        <span class="text-xs text-stone-400 dark:text-stone-500">
+                            {% if todo.duree < 60 %}
+                                {{ todo.duree }} min
+                            {% elseif todo.duree % 60 == 0 %}
+                                {{ (todo.duree / 60)|round(0, 'floor') }}h
+                            {% else %}
+                                {{ (todo.duree / 60)|round(0, 'floor') }}h {{ todo.duree % 60 }}min
+                            {% endif %}
+                        </span>
                     {% endif %}
-                </button>
 
-                {# Titre #}
-                <span onclick="document.getElementById('modale-details-{{ todo.id }}').showModal()"
-                    class="flex-1 font-medium text-sm sm:text-base cursor-pointer {% if todo.statut.value == 'termine' %}line-through text-stone-400 dark:text-stone-500{% else %}text-stone-800 dark:text-stone-100{% endif %}">{{ todo.titre }}</span>
+                    {# Date d'échéance (Aujourd'hui / Demain / date normale) #}
+                    {% if todo.dateFin %}
+                        <span class="text-xs text-stone-400 dark:text-stone-500">
+                            {% if todo.dateFin|date('Y-m-d') == "now"|date('Y-m-d') %}
+                                Aujourd'hui
+                            {% elseif todo.dateFin|date('Y-m-d') == "now"|date_modify('+1 day')|date('Y-m-d') %}
+                                Demain
+                            {% else %}
+                                {{ todo.dateFin|date('d/m/Y') }}
+                            {% endif %}
+                        </span>
+                    {% endif %}
 
-                {# Durée (formatée en "Xh Ymin") #}
-                {% if todo.duree %}
-                    <span class="text-xs text-stone-400 dark:text-stone-500">
-                        {% if todo.duree < 60 %}
-                            {{ todo.duree }} min
-                        {% elseif todo.duree % 60 == 0 %}
-                            {{ (todo.duree / 60)|round(0, 'floor') }}h
-                        {% else %}
-                            {{ (todo.duree / 60)|round(0, 'floor') }}h {{ todo.duree % 60 }}min
-                        {% endif %}
-                    </span>
-                {% endif %}
+                    {# Pastille d'importance #}
+                    <span class="w-2.5 h-2.5 rounded-full {% if todo.importance.value == 'normale' %}bg-green-600{% elseif todo.importance.value == 'importante' %}bg-orange-600{% else %}bg-red-600{% endif %}"></span>
 
-                {# Date d'échéance (Aujourd'hui / Demain / date normale) #}
-                {% if todo.dateFin %}
-                    <span class="text-xs text-stone-400 dark:text-stone-500">
-                        {% if todo.dateFin|date('Y-m-d') == "now"|date('Y-m-d') %}
-                            Aujourd'hui
-                        {% elseif todo.dateFin|date('Y-m-d') == "now"|date_modify('+1 day')|date('Y-m-d') %}
-                            Demain
-                        {% else %}
-                            {{ todo.dateFin|date('d/m/Y') }}
-                        {% endif %}
-                    </span>
-                {% endif %}
-
-                {# Pastille d'importance #}
-                <span class="w-2.5 h-2.5 rounded-full {% if todo.importance.value == 'normale' %}bg-green-600{% elseif todo.importance.value == 'importante' %}bg-orange-600{% else %}bg-red-600{% endif %}"></span>
-
-                {# Bouton Modifier — ouvre la modale de modification #}
-                <button type="button" onclick="document.getElementById('modale-modifier-{{ todo.id }}').showModal();"
-                        class="shrink-0 rounded-lg p-2 text-stone-400 dark:text-stone-500 hover:bg-stone-100 dark:hover:bg-slate-700 hover:text-stone-600 dark:hover:text-stone-300 active:scale-95 transition-all">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                </button>
-
-                {# Bouton Supprimer #}
-                <form method="post" action="{{ path('todo_supprimer', {id: todo.id}) }}" class="shrink-0">
-                    <button type="submit"
-                            class="rounded-lg p-2 text-stone-400 dark:text-stone-500 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-500 active:scale-95 transition-all">
+                    {# Bouton Modifier — ouvre la modale de modification #}
+                    <button type="button" onclick="document.getElementById('modale-modifier-{{ todo.id }}').showModal();"
+                            class="shrink-0 rounded-lg p-2 text-stone-400 dark:text-stone-500 hover:bg-stone-100 dark:hover:bg-slate-700 hover:text-stone-600 dark:hover:text-stone-300 active:scale-95 transition-all">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
                     </button>
-                </form>
+
+                    {# Bouton Supprimer #}
+                    <form method="post" action="{{ path('todo_supprimer', {id: todo.id}) }}" class="shrink-0">
+                        <button type="submit"
+                                class="rounded-lg p-2 text-stone-400 dark:text-stone-500 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-500 active:scale-95 transition-all">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
             </li>
 
             {# ---- Modales de ce todo ----
