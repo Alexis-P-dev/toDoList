@@ -161,3 +161,24 @@ dialog.sheet[open]::backdrop {
     50% { transform: scale(1.15); }
     100% { transform: scale(1); }
 }
+
+.selection-checkbox-wrapper,
+#form-suppression-groupee {
+    transition: opacity 0.25s ease, transform 0.25s ease, display 0.25s allow-discrete, overlay 0.25s allow-discrete;
+    opacity: 1;
+    transform: scale(1);
+}
+
+.selection-checkbox-wrapper.hidden,
+#form-suppression-groupee.hidden {
+    opacity: 0;
+    transform: scale(0.7);
+}
+
+@starting-style {
+    .selection-checkbox-wrapper:not(.hidden),
+    #form-suppression-groupee:not(.hidden) {
+        opacity: 0;
+        transform: scale(0.7);
+    }
+}
