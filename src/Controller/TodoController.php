@@ -176,6 +176,23 @@ class TodoController extends AbstractController
         return $this->redirectToRoute('todo_liste');
     }
 
+    #[Route('/todo/suppressionGroupee', name:'suppression_groupee', methods: ['POST'])]
+    public function suppressionGroupee(Request $request, TodoRepository $todoRepository, EntityManagerInterface $entityManager)
+    {
+        $idsASupprimer = $request->request->all('todosASupprimer');
+
+        if (!empty($idsASupprimer)) {
+            foreach( $idsASupprimer as $id) {
+                $todo = $todoRepository->find($id);
+                $entityManager->remove($todo);
+            }
+
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('todo_liste');
+    }
+
     #[Route('/todo/statut/{id}/{statut}', name: 'todo_statut', methods: ['POST'])]
     public function changerStatut(int $id, string $statut, TodoRepository $todoRepository, EntityManagerInterface $entityManager)
     {
