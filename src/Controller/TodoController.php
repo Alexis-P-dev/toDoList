@@ -19,6 +19,7 @@ class TodoController extends AbstractController
     public function liste(TodoRepository $todoRepository, Request $request)
     {
         $filtre = $request->query->get('filtre');
+        $nbTermine = $todoRepository->count(['statut' => Statut::TERMINE]);
 
         if ($filtre === 'termine') {
             $todos = $todoRepository->findBy(['statut' => Statut::TERMINE]);
@@ -64,6 +65,7 @@ class TodoController extends AbstractController
             'todos' => $todos,
             'filtre' => $filtre,
             'tacheNow' => $todosAFaire[0] ?? null,
+            'nbTermine' => $nbTermine,
         ]);
     }
 
