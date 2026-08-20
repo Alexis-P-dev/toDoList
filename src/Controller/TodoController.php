@@ -20,6 +20,7 @@ class TodoController extends AbstractController
     {
         $filtre = $request->query->get('filtre');
         $nbTermine = $todoRepository->count(['statut' => Statut::TERMINE]);
+        $nbTotal = $todoRepository->count([]);
 
         if ($filtre === 'termine') {
             $todos = $todoRepository->findBy(['statut' => Statut::TERMINE], ['ordre' => 'ASC']);
@@ -74,6 +75,7 @@ class TodoController extends AbstractController
             'filtre' => $filtre,
             'tacheNow' => $todosAFaire[0] ?? null,
             'nbTermine' => $nbTermine,
+            'nbTotal' => $nbTotal,
             'messageAccueil' => $messageAccueil,
         ]);
     }
