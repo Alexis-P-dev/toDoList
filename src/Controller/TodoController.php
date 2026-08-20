@@ -20,6 +20,7 @@ class TodoController extends AbstractController
     {
         $filtre = $request->query->get('filtre');
         $nbTermine = $todoRepository->count(['statut' => Statut::TERMINE]);
+        $nbTotal = $todoRepository->count([]);
 
         if ($filtre === 'termine') {
             $todos = $todoRepository->findBy(['statut' => Statut::TERMINE], ['ordre' => 'ASC']);
@@ -29,6 +30,14 @@ class TodoController extends AbstractController
             $todos = $todoRepository->findBy(['statut' => Statut::EN_COURS], ['ordre' => 'ASC']);
         } else {
             $todos = $todoRepository->findBy([], ['ordre' => 'ASC']);
+        }
+
+        if (date("H") >= 6 && date("H") <= 12){
+            $messageAccueil = "Bonjour";
+        } else if (date("H") > 12 && date("H") <= 18){
+            $messageAccueil = "Bon après-midi";
+        } else {
+            $messageAccueil = "Bonsoir";
         }
 
         $todosAFaire = $todoRepository->findBy(['statut' => Statut::A_FAIRE], ['ordre' => 'ASC']);
@@ -66,6 +75,8 @@ class TodoController extends AbstractController
             'filtre' => $filtre,
             'tacheNow' => $todosAFaire[0] ?? null,
             'nbTermine' => $nbTermine,
+            'nbTotal' => $nbTotal,
+            'messageAccueil' => $messageAccueil,
         ]);
     }
 

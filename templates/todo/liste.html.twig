@@ -8,6 +8,36 @@
         <p class="mb-4 rounded-lg bg-red-50 dark:bg-red-500/10 px-4 py-3 text-sm text-red-700 dark:text-red-400 border border-red-200 dark:border-red-500/30">{{ message }}</p>
     {% endfor %}
 
+    <div class="flex items-center gap-3 mb-6">
+        <div class="shrink-0 w-11 h-11 rounded-full bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center">
+            {% if messageAccueil == 'Bonjour' %}
+                <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <circle cx="12" cy="12" r="4" />
+                    <path stroke-linecap="round" d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+                </svg>
+            {% elseif messageAccueil == 'Bon après-midi' %}
+                <svg class="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a3 3 0 000-6 5 5 0 00-9.8-1.5A4 4 0 003 15z" />
+                </svg>
+            {% else %}
+                <svg class="w-6 h-6 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            {% endif %}
+        </div>
+
+        <div>
+            <h3 class="text-xl font-bold text-stone-900 dark:text-stone-100">{{ messageAccueil }}</h3>
+            <p class="text-sm text-stone-500 dark:text-stone-400">
+                {% if nbTotal is defined and nbTotal > 0 %}
+                    {{ nbTotal - nbTermine }} tâche{{ (nbTotal - nbTermine) > 1 ? 's' : '' }} à faire aujourd'hui
+                {% else %}
+                    Aucune tâche pour le moment
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
     {# ============ BARRE D'AJOUT RAPIDE ============ #}
     <div class="flex items-center justify-between rounded-xl bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 px-4 py-3 mb-4 focus-within:border-violet-300 dark:focus-within:border-violet-500 transition-colors">
         <input type="text" id="todoTitre" placeholder="Ajouter une tâche..."
