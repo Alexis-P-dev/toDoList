@@ -22,16 +22,16 @@ class TodoController extends AbstractController
         $nbTermine = $todoRepository->count(['statut' => Statut::TERMINE]);
 
         if ($filtre === 'termine') {
-            $todos = $todoRepository->findBy(['statut' => Statut::TERMINE]);
+            $todos = $todoRepository->findBy(['statut' => Statut::TERMINE], ['ordre' => 'ASC']);
         } elseif ($filtre === 'a_faire') {
-            $todos = $todoRepository->findBy(['statut' => Statut::A_FAIRE]);
+            $todos = $todoRepository->findBy(['statut' => Statut::A_FAIRE], ['ordre' => 'ASC']);
         } elseif ($filtre === 'en_cours') {
-            $todos = $todoRepository->findBy(['statut' => Statut::EN_COURS]);
+            $todos = $todoRepository->findBy(['statut' => Statut::EN_COURS], ['ordre' => 'ASC']);
         } else {
-            $todos = $todoRepository->findAll();
+            $todos = $todoRepository->findBy([], ['ordre' => 'ASC']);
         }
 
-        $todosAFaire = $todoRepository->findBy(['statut' => Statut::A_FAIRE]);
+        $todosAFaire = $todoRepository->findBy(['statut' => Statut::A_FAIRE], ['ordre' => 'ASC']);
 
         $poidsImportance = [
             'urgente' => 1,
