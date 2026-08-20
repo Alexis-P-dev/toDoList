@@ -70,7 +70,7 @@ class TodoController extends AbstractController
     }
 
     #[Route('/todo/nouveau', name: 'todo_nouveau', methods: ['POST'])]
-    public function nouveau(Request $request, EntityManagerInterface $entityManager)
+    public function nouveau(Request $request, EntityManagerInterface $entityManager, TodoRepository $todoRepository)
     {
         $titre = $request->request->get('titre');
         $description = $request->request->get('description');
@@ -101,6 +101,9 @@ class TodoController extends AbstractController
             $duree = intval($heures) * 60 + intval($minutes);
             $todo->setDuree($duree);
         }
+
+        $nombreTodos = $todoRepository->count([]);
+        $todo->setOrdre($nombreTodos);
         
         $entityManager->persist($todo);
         $entityManager->flush();
