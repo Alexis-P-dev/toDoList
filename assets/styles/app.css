@@ -212,3 +212,7 @@ dialog.sheet[open]::backdrop {
 .dragging {
     opacity: 0.5;
 }
+
+.drag-item {
+    user-select: none;
+}
