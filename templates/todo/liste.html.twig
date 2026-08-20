@@ -93,18 +93,34 @@
         </a>
     </div>
 
-    <button type="button" id="btn-toggle-selection" onclick="toggleModeSelection()"
-            class="text-sm font-medium text-violet-600 dark:text-violet-400 mb-3 active:scale-95 transition-all">
-        Sélectionner
-    </button>
+    <div class="flex items-center justify-between mb-3">
+        <button type="button" id="btn-toggle-selection" onclick="toggleModeSelection()"
+                class="flex items-center gap-1.5 text-sm font-medium text-violet-600 dark:text-violet-400 active:scale-95 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-dasharray="3 3">
+                <circle cx="12" cy="12" r="9" />
+            </svg>
+            Sélectionner
+        </button>
+
+        <button type="button" id="btn-toggle-reorder" onclick="toggleModeReorder()"
+                class="flex items-center gap-1.5 text-sm font-medium text-violet-600 dark:text-violet-400 active:scale-95 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                <circle cx="2" cy="6" r="1" fill="currentColor" stroke="none" />
+                <circle cx="2" cy="12" r="1" fill="currentColor" stroke="none" />
+                <circle cx="2" cy="18" r="1" fill="currentColor" stroke="none" />
+            </svg>
+            Réorganiser
+        </button>
+    </div>
 
     {# ============ LISTE DES TÂCHES ============ #}
-    <ul class="space-y-3">
+    <ul id="liste-todos" class="space-y-3">
         {% for todo in todos %}
             {# Carte todo — un clic n'importe où dessus ouvre la modale de détails.
                Les boutons internes (statut/modifier/supprimer) stoppent la propagation
                pour garder leur propre action, indépendante du clic sur la carte. #}
-            <li class="flex items-center gap-3 animate-fade-slide-up" style="animation-delay: {{ loop.index0 * 100 }}ms">
+            <li data-todo-id="{{ todo.id }}" class="drag-item flex items-center gap-3 animate-fade-slide-up" style="animation-delay: {{ loop.index0 * 100 }}ms">
 
                 <label class="selection-checkbox-wrapper relative shrink-0 w-5 h-5 is-collapsed items-center justify-center">
                     <input type="checkbox" name="todosASupprimer[]" value="{{ todo.id }}" form="form-suppression-groupee" class="custom-checkbox">
@@ -181,6 +197,14 @@
                             </svg>
                         </button>
                     </form>
+
+                    <div class="drag-handle-wrapper relative shrink-0 w-5 flex items-center justify-center is-collapsed" style="cursor: grab;">
+                        <svg class="w-5 h-5 text-stone-400" fill="currentColor" viewBox="0 0 24 24">
+                            <circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/>
+                            <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
+                            <circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/>
+                        </svg>
+                    </div>
                 </div>
             </li>
 

@@ -8,7 +8,7 @@ use App\Enum\Statut;
 use App\Enum\Importance;
 use App\Repository\TodoRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Repository\Exception\InvalidFindByCall;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,16 +22,16 @@ class TodoController extends AbstractController
         $nbTermine = $todoRepository->count(['statut' => Statut::TERMINE]);
 
         if ($filtre === 'termine') {
-            $todos = $todoRepository->findBy(['statut' => Statut::TERMINE]);
+            $todos = $todoRepository->findBy(['statut' => Statut::TERMINE], ['ordre' => 'ASC']);
         } elseif ($filtre === 'a_faire') {
-            $todos = $todoRepository->findBy(['statut' => Statut::A_FAIRE]);
+            $todos = $todoRepository->findBy(['statut' => Statut::A_FAIRE], ['ordre' => 'ASC']);
         } elseif ($filtre === 'en_cours') {
-            $todos = $todoRepository->findBy(['statut' => Statut::EN_COURS]);
+            $todos = $todoRepository->findBy(['statut' => Statut::EN_COURS], ['ordre' => 'ASC']);
         } else {
-            $todos = $todoRepository->findAll();
+            $todos = $todoRepository->findBy([], ['ordre' => 'ASC']);
         }
 
-        $todosAFaire = $todoRepository->findBy(['statut' => Statut::A_FAIRE]);
+        $todosAFaire = $todoRepository->findBy(['statut' => Statut::A_FAIRE], ['ordre' => 'ASC']);
 
         $poidsImportance = [
             'urgente' => 1,
@@ -70,7 +70,7 @@ class TodoController extends AbstractController
     }
 
     #[Route('/todo/nouveau', name: 'todo_nouveau', methods: ['POST'])]
-    public function nouveau(Request $request, EntityManagerInterface $entityManager)
+    public function nouveau(Request $request, EntityManagerInterface $entityManager, TodoRepository $todoRepository)
     {
         $titre = $request->request->get('titre');
         $description = $request->request->get('description');
@@ -101,6 +101,9 @@ class TodoController extends AbstractController
             $duree = intval($heures) * 60 + intval($minutes);
             $todo->setDuree($duree);
         }
+
+        $nombreTodos = $todoRepository->count([]);
+        $todo->setOrdre($nombreTodos);
         
         $entityManager->persist($todo);
         $entityManager->flush();
@@ -232,5 +235,20 @@ class TodoController extends AbstractController
             'pourcentageEnCours' => $pourcentageEnCours,
             'pourcentageTermine' => $pourcentageTermine,
         ]);
+    }
+
+    #[Route('/todo/reordonner', name: 'todo_reordonner', methods: ['POST'])]
+    public function reordonner(Request $request, TodoRepository $todoRepository, EntityManagerInterface $entityManager)
+    {
+        $idsOrdonnes = $request->request->all('ordre');
+
+        foreach ($idsOrdonnes as $index => $id) {
+            $todo = $todoRepository->find($id);
+            $todo->setOrdre($index);
+        }
+
+        $entityManager->flush();
+
+        return new Response('OK');
     }
 }

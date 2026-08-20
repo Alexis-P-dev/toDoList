@@ -29,3 +29,82 @@ window.toggleModeSelection = function () {
         });
     }
 };
+
+window.toggleModeReorder = function () {
+    const handles = document.querySelectorAll('.drag-handle-wrapper');
+    const bouton = document.getElementById('btn-toggle-reorder');
+
+    document.querySelectorAll('.drag-item').forEach(function (element) {
+        element.classList.remove('animate-fade-slide-up');
+    });
+
+    handles.forEach(function (element) {
+        element.classList.toggle('is-collapsed');
+    });
+
+    bouton.textContent = bouton.textContent.trim() === 'Réorganiser' ? 'Terminer' : 'Réorganiser';
+};
+
+// Variables pour suivre l'élément en cours de glissement
+let elementGlisse = null;
+
+document.addEventListener('pointerdown', function (event) {
+    const poignee = event.target.closest('.drag-handle-wrapper');
+    if (!poignee) return; // clic ailleurs que sur une poignée : on ignore
+
+    elementGlisse = poignee.closest('.drag-item');
+    elementGlisse.setPointerCapture(event.pointerId);
+    elementGlisse.classList.add('dragging');
+});
+
+let framePlanifiee = false;
+
+document.addEventListener('pointermove', function (event) {
+    if (!elementGlisse) return;
+    if (framePlanifiee) return;
+
+    framePlanifiee = true;
+    requestAnimationFrame(function () {
+        const liste = document.getElementById('liste-todos');
+        const elementSurvole = document.elementsFromPoint(event.clientX, event.clientY)
+            .find(el => el.classList.contains('drag-item') && el !== elementGlisse);
+
+        if (elementSurvole) {
+            const rect = elementSurvole.getBoundingClientRect();
+            const milieu = rect.top + rect.height / 2;
+
+            if (event.clientY < milieu) {
+                liste.insertBefore(elementGlisse, elementSurvole);
+            } else {
+                liste.insertBefore(elementGlisse, elementSurvole.nextSibling);
+            }
+        }
+        framePlanifiee = false;
+    });
+});
+
+document.addEventListener('pointerup', function () {
+    if (!elementGlisse) return;
+
+    elementGlisse.classList.remove('dragging');
+    elementGlisse = null;
+
+    enregistrerNouvelOrdre();
+});
+
+function enregistrerNouvelOrdre() {
+    const ids = Array.from(document.querySelectorAll('.drag-item')).map(function (element) {
+        return element.dataset.todoId;
+    });
+
+    const params = new URLSearchParams();
+    ids.forEach(function (id) {
+        params.append('ordre[]', id);
+    });
+
+    fetch('/todo/reordonner', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params
+    });
+}
