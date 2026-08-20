@@ -31,6 +31,14 @@ class TodoController extends AbstractController
             $todos = $todoRepository->findBy([], ['ordre' => 'ASC']);
         }
 
+        if (date("H") >= 6 && date("H") <= 12){
+            $messageAccueil = "Bonjour";
+        } else if (date("H") > 12 && date("H") <= 18){
+            $messageAccueil = "Bon après-midi";
+        } else {
+            $messageAccueil = "Bonsoir";
+        }
+
         $todosAFaire = $todoRepository->findBy(['statut' => Statut::A_FAIRE], ['ordre' => 'ASC']);
 
         $poidsImportance = [
@@ -66,6 +74,7 @@ class TodoController extends AbstractController
             'filtre' => $filtre,
             'tacheNow' => $todosAFaire[0] ?? null,
             'nbTermine' => $nbTermine,
+            'messageAccueil' => $messageAccueil,
         ]);
     }
 
