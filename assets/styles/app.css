@@ -193,6 +193,7 @@ dialog.sheet[open]::backdrop {
 }
 
 .drag-handle-wrapper {
+    touch-action: none;
     width: 20px;
     margin-right: 8px;
     overflow: hidden;

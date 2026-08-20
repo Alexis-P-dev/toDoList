@@ -34,6 +34,10 @@ window.toggleModeReorder = function () {
     const handles = document.querySelectorAll('.drag-handle-wrapper');
     const bouton = document.getElementById('btn-toggle-reorder');
 
+    document.querySelectorAll('.drag-item').forEach(function (element) {
+        element.classList.remove('animate-fade-slide-up');
+    });
+
     handles.forEach(function (element) {
         element.classList.toggle('is-collapsed');
     });
@@ -53,23 +57,30 @@ document.addEventListener('pointerdown', function (event) {
     elementGlisse.classList.add('dragging');
 });
 
+let framePlanifiee = false;
+
 document.addEventListener('pointermove', function (event) {
     if (!elementGlisse) return;
+    if (framePlanifiee) return;
 
-    const liste = document.getElementById('liste-todos');
-    const elementSurvole = document.elementsFromPoint(event.clientX, event.clientY)
-        .find(el => el.classList.contains('drag-item') && el !== elementGlisse);
+    framePlanifiee = true;
+    requestAnimationFrame(function () {
+        const liste = document.getElementById('liste-todos');
+        const elementSurvole = document.elementsFromPoint(event.clientX, event.clientY)
+            .find(el => el.classList.contains('drag-item') && el !== elementGlisse);
 
-    if (elementSurvole) {
-        const rect = elementSurvole.getBoundingClientRect();
-        const milieu = rect.top + rect.height / 2;
+        if (elementSurvole) {
+            const rect = elementSurvole.getBoundingClientRect();
+            const milieu = rect.top + rect.height / 2;
 
-        if (event.clientY < milieu) {
-            liste.insertBefore(elementGlisse, elementSurvole);
-        } else {
-            liste.insertBefore(elementGlisse, elementSurvole.nextSibling);
+            if (event.clientY < milieu) {
+                liste.insertBefore(elementGlisse, elementSurvole);
+            } else {
+                liste.insertBefore(elementGlisse, elementSurvole.nextSibling);
+            }
         }
-    }
+        framePlanifiee = false;
+    });
 });
 
 document.addEventListener('pointerup', function () {
