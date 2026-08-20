@@ -8,7 +8,7 @@ use App\Enum\Statut;
 use App\Enum\Importance;
 use App\Repository\TodoRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Repository\Exception\InvalidFindByCall;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -235,5 +235,20 @@ class TodoController extends AbstractController
             'pourcentageEnCours' => $pourcentageEnCours,
             'pourcentageTermine' => $pourcentageTermine,
         ]);
+    }
+
+    #[Route('/todo/reordonner', name: 'todo_reordonner', methods: ['POST'])]
+    public function reordonner(Request $request, TodoRepository $todoRepository, EntityManagerInterface $entityManager)
+    {
+        $idsOrdonnes = $request->request->all('ordre');
+
+        foreach ($idsOrdonnes as $index => $id) {
+            $todo = $todoRepository->find($id);
+            $todo->setOrdre($index);
+        }
+
+        $entityManager->flush();
+
+        return new Response('OK');
     }
 }
