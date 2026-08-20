@@ -93,15 +93,26 @@
         </a>
     </div>
 
-    <button type="button" id="btn-toggle-selection" onclick="toggleModeSelection()"
-            class="text-sm font-medium text-violet-600 dark:text-violet-400 mb-3 active:scale-95 transition-all">
-        Sélectionner
-    </button>
+    <div class="flex items-center justify-between mb-3">
+        <button type="button" id="btn-toggle-selection" onclick="toggleModeSelection()"
+                class="flex items-center gap-1.5 text-sm font-medium text-violet-600 dark:text-violet-400 active:scale-95 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-dasharray="3 3">
+                <circle cx="12" cy="12" r="9" />
+            </svg>
+            Sélectionner
+        </button>
 
-    <button type="button" id="btn-toggle-reorder" onclick="toggleModeReorder()"
-            class="text-sm font-medium text-violet-600 dark:text-violet-400 mb-3 active:scale-95 transition-all">
-        Réorganiser
-    </button>
+        <button type="button" id="btn-toggle-reorder" onclick="toggleModeReorder()"
+                class="flex items-center gap-1.5 text-sm font-medium text-violet-600 dark:text-violet-400 active:scale-95 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                <circle cx="2" cy="6" r="1" fill="currentColor" stroke="none" />
+                <circle cx="2" cy="12" r="1" fill="currentColor" stroke="none" />
+                <circle cx="2" cy="18" r="1" fill="currentColor" stroke="none" />
+            </svg>
+            Réorganiser
+        </button>
+    </div>
 
     {# ============ LISTE DES TÂCHES ============ #}
     <ul id="liste-todos" class="space-y-3">
