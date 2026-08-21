@@ -29,7 +29,7 @@ class TodoController extends AbstractController
         } elseif ($filtre === 'en_cours') {
             $todos = $todoRepository->findBy(['statut' => Statut::EN_COURS, 'dateSuppression' => null], ['ordre' => 'ASC']);
         } else {
-            $todos = $todoRepository->findBy([], ['ordre' => 'ASC', 'dateSuppression' => null]);
+            $todos = $todoRepository->findBy(['dateSuppression' => null], ['ordre' => 'ASC']);
         }
 
         if (date("H") >= 6 && date("H") <= 12){
