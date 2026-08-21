@@ -107,4 +107,67 @@ function enregistrerNouvelOrdre() {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: params
     });
+};
+
+window.supprimerTodo = function (id) {
+    const carte = document.querySelector('[data-todo-id="' + id + '"]');
+    if (carte) {
+        carte.style.display = 'none';
+    }
+
+    fetch('/todo/supprimer/' + id, {
+        method: 'POST'
+    });
+
+    afficherToastAnnulation(id);
+};
+
+window.supprimerTodo = function (id) {
+    const carte = document.querySelector('[data-todo-id="' + id + '"]');
+    if (carte) {
+        carte.style.display = 'none';
+    }
+
+    afficherToastAnnulation(id);
+};
+
+function afficherToastAnnulation(id) {
+    const conteneur = document.getElementById('conteneur-toasts');
+
+    const toast = document.createElement('div');
+    toast.className = 'toast w-full max-w-xs rounded-lg bg-stone-800 dark:bg-stone-700 text-white text-sm px-4 py-3 shadow-lg flex items-center justify-between gap-3';
+    toast.innerHTML = 'Tâche supprimée <button type="button" class="font-semibold text-violet-300 active:scale-95 transition-all">Annuler</button>';
+
+    conteneur.appendChild(toast);
+
+    const boutonAnnuler = toast.querySelector('button');
+
+    const minuteur = setTimeout(function () {
+        confirmerSuppression(id, toast);
+    }, 5000);
+
+    boutonAnnuler.addEventListener('click', function () {
+        clearTimeout(minuteur);
+        restaurerTodo(id, toast);
+    });
+}
+
+function confirmerSuppression(id, toast) {
+    fetch('/todo/supprimer/' + id, { method: 'POST' });
+    retirerToast(toast);
+}
+
+function restaurerTodo(id, toast) {
+    const carte = document.querySelector('[data-todo-id="' + id + '"]');
+    if (carte) {
+        carte.style.display = '';
+    }
+    retirerToast(toast);
+}
+
+function retirerToast(toast) {
+    toast.classList.add('toast-sortant');
+    setTimeout(function () {
+        toast.remove();
+    }, 250);
 }
