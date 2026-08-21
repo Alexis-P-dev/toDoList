@@ -23,13 +23,13 @@ class TodoController extends AbstractController
         $nbTotal = $todoRepository->count([]);
 
         if ($filtre === 'termine') {
-            $todos = $todoRepository->findBy(['statut' => Statut::TERMINE], ['ordre' => 'ASC']);
+            $todos = $todoRepository->findBy(['statut' => Statut::TERMINE, 'dateSuppression' => null], ['ordre' => 'ASC']);
         } elseif ($filtre === 'a_faire') {
-            $todos = $todoRepository->findBy(['statut' => Statut::A_FAIRE], ['ordre' => 'ASC']);
+            $todos = $todoRepository->findBy(['statut' => Statut::A_FAIRE, 'dateSuppression' => null], ['ordre' => 'ASC']);
         } elseif ($filtre === 'en_cours') {
-            $todos = $todoRepository->findBy(['statut' => Statut::EN_COURS], ['ordre' => 'ASC']);
+            $todos = $todoRepository->findBy(['statut' => Statut::EN_COURS, 'dateSuppression' => null], ['ordre' => 'ASC']);
         } else {
-            $todos = $todoRepository->findBy([], ['ordre' => 'ASC']);
+            $todos = $todoRepository->findBy([], ['ordre' => 'ASC', 'dateSuppression' => null]);
         }
 
         if (date("H") >= 6 && date("H") <= 12){
@@ -40,7 +40,7 @@ class TodoController extends AbstractController
             $messageAccueil = "Bonsoir";
         }
 
-        $todosAFaire = $todoRepository->findBy(['statut' => Statut::A_FAIRE], ['ordre' => 'ASC']);
+        $todosAFaire = $todoRepository->findBy(['statut' => Statut::A_FAIRE, 'dateSuppression' => null], ['ordre' => 'ASC']);
 
         $poidsImportance = [
             'urgente' => 1,
@@ -166,11 +166,11 @@ class TodoController extends AbstractController
     }
 
     #[Route('/todo/supprimer/{id}', name: 'todo_supprimer', methods: ['POST'])]
-    public function supprimer(int $id, TodoRepository $todoRepository, EntityManagerInterface $entityManager)
+    public function supprimer(int $id, Request $request, TodoRepository $todoRepository, EntityManagerInterface $entityManager)
     {
         $todo = $todoRepository->find($id);
 
-        $entityManager->remove($todo);
+        $todo->setDateSuppression(new DateTime());
         $entityManager->flush();
 
         return $this->redirectToRoute('todo_liste');
